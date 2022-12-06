@@ -3,6 +3,8 @@ import sqlite3
 from tkinter import ttk
 from datetime import datetime
 import subprocess
+import serial
+import time
 #Fonction Connexion------------------------
 def Connexion() :
     user = entryUser.get()
@@ -88,12 +90,29 @@ def Connexion() :
             tree.column(4, width=25)
             tree.column(5, width=25)
 
-        conn = sqlite3.connect("mydatabase.db")
-        cur = conn.cursor()
-        select = cur.execute(
+            conn = sqlite3.connect("mydatabase.db")
+            cur = conn.cursor()
+            select = cur.execute(
             "select Produit.ID,Produit.Labelle,Produit.Temps_F,Produit.Quantite_stocke,Produit.Quantite_restante FROM Produit,abdellah WHERE abdellah.Matricule==matricule and abdellah.ID_Produit==Produit.ID")
-        for row in select:
-            tree.insert('', END, values=row)
+            for row in select:
+                tree.insert('', END, values=row)
+
+
+            #yahyas
+            arduino=serial.Serial('COM11',9600)
+            time.sleep(2)
+            if arduino.isOpen():
+                arduino.close()
+            arduino.open()
+            arduino.isOpen()
+            dato_leido=arduino.readline()
+            time.sleep(2)
+            print(dato_leido)
+            arduino.write('a'.encode())
+            time.sleep(2) 
+            arduino.close()
+
+            #finYahyas
 
         # FIN Start-----------------------------------------------------------
         # Fonction Presence ------------------------------------------------------

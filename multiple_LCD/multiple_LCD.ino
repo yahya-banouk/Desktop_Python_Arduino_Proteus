@@ -13,6 +13,9 @@
   #include <MFRC522.h>
 
   SoftwareSerial BT(0, 1); 
+
+
+  
   DS3231  rtc(SDA, SCL);  
   Time t;
   const int stepsPerRevolution = 10; 
@@ -40,6 +43,7 @@
   byte etat = 1;
   char cause = "cause 1";
   char a='a'; 
+  char y = 's';
   
   LiquidCrystal_I2C lcd(0x3F,20,4);
   
@@ -75,9 +79,13 @@
       //rtc.setTime(12, 0, 0);     // Set the time to 12:00:00 (24hr format)
       //rtc.setDate(1, 1, 2014);   // Set the date to January 1st, 2014
 
-      Serial.begin(9600);
+      Serial.begin(9600);     
       BT.begin(9600);
       BT.println("Hello from Arduino");
+      
+      
+
+
       
       lcd.init(); //lcd 1 startup
       lcd.backlight();
@@ -100,12 +108,27 @@
     getID();
     Serial.print("RFID : ");
     Serial.println(n);
+
+    //yahyas
+      y = BT.read();
+      if(y=='a')
+      {
+        digitalWrite(led_vert,LOW );  
+        digitalWrite(led_rouge,HIGH); 
+
+        delay(200); 
+        
+        etat = 0;
+        y='s';
+        
+      }
+      //last yahyas
     
     if (BT.available())
       {
         a=(BT.read());
        if (a=='a')
-          {
+         {
             BT.println("Cause 1");
             cause = "cause 1";
             digitalWrite(led_orange, HIGH); 
@@ -124,11 +147,16 @@
        etat = 0;
       }
       
+
+      
+      
+      
     if(digitalRead(BT1)==1 && digitalRead(BT2)==1 )
       {   
         etat = 1;
         digitalWrite(led_vert, HIGH);  
         digitalWrite(led_rouge, LOW);
+        
         
         // Send Day-of-Week
         Serial.print(rtc.getDOWStr());
